@@ -23,6 +23,7 @@
         <button onclick="sortGainers()">Top Gainers</button>
         <button onclick="sortLosers()">Top Losers</button>
         <button onclick="resetData()">Reset</button>
+        <button onclick="showTrends()">📈 Show Trends</button>
     </div>
 
     <!-- KPI Cards -->
@@ -47,6 +48,12 @@
     <!-- Chart -->
     <div class="chart-container">
         <canvas id="chart"></canvas>
+    </div>
+
+    <!-- Trend Section -->
+    <div id="trendSection" class="trend-section">
+        <h2>📈 Market Trends</h2>
+        <div id="trendContent"></div>
     </div>
 
 </div>
