@@ -80,11 +80,64 @@ function sortGainers() {
 }
 
 function sortLosers() {
-    currentData.sort((a,b)=> (a.closePrice-a.openPrice) - (b.closePrice-b.openPrice));
+    currentData.sort((a,b)=> (a.closePrice-a.openPrice) - (b.closePrice-a.openPrice));
     loadDashboard(currentData);
 }
 
 function resetData() {
     currentData = [...originalData];
     loadDashboard(currentData);
+}
+
+// 🔥 NEW FEATURE: Trends
+
+function showTrends() {
+
+    let trendHTML = "";
+
+    currentData.forEach(stock => {
+
+        let change = stock.closePrice - stock.openPrice;
+        let percent = ((change / stock.openPrice) * 100).toFixed(2);
+
+        let trendType = "";
+
+        if (percent > 1) trendType = "Strong Uptrend 🚀";
+        else if (percent > 0) trendType = "Mild Uptrend 📈";
+        else if (percent < -1) trendType = "Strong Downtrend 🔻";
+        else trendType = "Mild Downtrend 📉";
+
+        trendHTML += `
+            <p><b>${stock.symbol}</b> → ${trendType} (${percent}%)</p>
+        `;
+    });
+
+    document.getElementById("trendContent").innerHTML = trendHTML;
+    document.getElementById("trendSection").style.display = "block";
+
+    drawTrendChart(currentData);
+}
+
+function drawTrendChart(data) {
+
+    const ctx = document.getElementById("chart");
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: data.map(s => s.symbol),
+            datasets: [
+                {
+                    label: "Open Price",
+                    data: data.map(s => s.openPrice)
+                },
+                {
+                    label: "Close Price",
+                    data: data.map(s => s.closePrice)
+                }
+            ]
+        }
+    });
 }
