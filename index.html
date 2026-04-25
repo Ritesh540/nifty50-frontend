@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NIFTY 50 Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header>
+    <h1>📈 NIFTY 50 Dashboard</h1>
+    <p>Stock Analysis & Insights</p>
+</header>
+
+<div class="container">
+
+    <div class="controls">
+        <button onclick="loadStocks()">Load Stocks</button>
+    </div>
+
+    <div id="loader" class="hidden">Loading data...</div>
+
+    <div class="cards" id="stockContainer"></div>
+
+    <div class="chart-container">
+        <canvas id="chart"></canvas>
+    </div>
+
+</div>
+
+<footer>
+    <p>© 2026 Ritesh Salunke | FinTech Project</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
