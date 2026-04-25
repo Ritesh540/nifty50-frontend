@@ -1,81 +1,90 @@
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0f172a;
-    color: white;
+let originalData = [
+    { symbol: "RELIANCE", openPrice: 2480, closePrice: 2505 },
+    { symbol: "TCS", openPrice: 3750, closePrice: 3810 },
+    { symbol: "INFY", openPrice: 1490, closePrice: 1475 },
+    { symbol: "HDFCBANK", openPrice: 1620, closePrice: 1640 },
+    { symbol: "ICICIBANK", openPrice: 980, closePrice: 965 },
+    { symbol: "SBIN", openPrice: 610, closePrice: 625 },
+    { symbol: "LT", openPrice: 3400, closePrice: 3450 },
+    { symbol: "ITC", openPrice: 420, closePrice: 415 }
+];
+
+let currentData = [...originalData];
+let chart;
+
+window.onload = () => loadDashboard(currentData);
+
+function loadDashboard(data) {
+    displayStocks(data);
+    updateKPIs(data);
+    drawChart(data);
 }
 
-header {
-    background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
-    text-align: center;
-    padding: 15px;
+function displayStocks(data) {
+    let container = document.getElementById("stockContainer");
+    container.innerHTML = "";
+
+    data.forEach(stock => {
+        let change = stock.closePrice - stock.openPrice;
+        let isUp = change > 0;
+
+        container.innerHTML += `
+        <div class="card">
+            <h3>${stock.symbol}</h3>
+            <p>₹${stock.closePrice}</p>
+            <p class="${isUp ? 'price-up' : 'price-down'}">
+                ${isUp ? "▲" : "▼"} ${change}
+            </p>
+        </div>`;
+    });
 }
 
-.container {
-    padding: 20px;
+function updateKPIs(data) {
+    let avg = (data.reduce((sum, s) => sum + s.closePrice, 0) / data.length).toFixed(2);
+
+    let topG = data.reduce((a,b)=> (b.closePrice-b.openPrice) > (a.closePrice-a.openPrice) ? b : a);
+    let topL = data.reduce((a,b)=> (b.closePrice-b.openPrice) < (a.closePrice-a.openPrice) ? b : a);
+
+    document.getElementById("avgPrice").innerText = "₹" + avg;
+    document.getElementById("topGainer").innerText = topG.symbol;
+    document.getElementById("topLoser").innerText = topL.symbol;
 }
 
-.controls {
-    text-align: center;
-    margin-bottom: 20px;
+function drawChart(data) {
+    let ctx = document.getElementById("chart");
+
+    if(chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: data.map(d=>d.symbol),
+            datasets: [{
+                label: "Stock Prices",
+                data: data.map(d=>d.closePrice)
+            }]
+        }
+    });
 }
 
-.controls input {
-    padding: 8px;
-    width: 200px;
+function filterStocks() {
+    let value = document.getElementById("search").value.toUpperCase();
+    let filtered = originalData.filter(s => s.symbol.includes(value));
+    currentData = filtered;
+    loadDashboard(filtered);
 }
 
-button {
-    padding: 8px 12px;
-    margin: 5px;
-    background: #0ea5e9;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
+function sortGainers() {
+    currentData.sort((a,b)=> (b.closePrice-b.openPrice) - (a.closePrice-a.openPrice));
+    loadDashboard(currentData);
 }
 
-.kpis {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
+function sortLosers() {
+    currentData.sort((a,b)=> (a.closePrice-a.openPrice) - (b.closePrice-b.openPrice));
+    loadDashboard(currentData);
 }
 
-.kpi {
-    background: #1e293b;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    width: 30%;
-}
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
-}
-
-.card {
-    background: #1e293b;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.price-up {
-    color: #22c55e;
-}
-
-.price-down {
-    color: #ef4444;
-}
-
-.chart-container {
-    margin-top: 30px;
-}
-
-footer {
-    text-align: center;
-    padding: 10px;
-    background: #020617;
+function resetData() {
+    currentData = [...originalData];
+    loadDashboard(currentData);
 }
